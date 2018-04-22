@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Julik Tarkhanov"]
   spec.email         = ["me@julik.nl"]
 
-  spec.summary       = %q{Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{Write a longer description or delete this line.}
+  spec.summary       = 'Minimum viable API for instrumentation in libraries'
+  spec.description   = 'Minimum viable API for instrumentation in libraries. Source metrics from your libraries to Measurometer, pick them up on the other end in the application, centrally.'
   spec.homepage      = "https://github.com/WeTransfer/measurometer"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   end
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features)/})
+    f.match(/\.png$/)
   end
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
