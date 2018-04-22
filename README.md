@@ -1,6 +1,6 @@
 # Measurometer
 
-Measurometer is a minimum viable API for instrumentation _in libraries._ It is a lightweight "hub" module that
+Minimum viable API for instrumentation _in libraries._ A lightweight "hub" module that
 will source simple instrumentation measurements/block contexts to different destinations. To illustrate the usefulness,
 imagine you are using a library called `promulgator` in your code, as well as a library called `profligator`
 
@@ -9,7 +9,7 @@ You for a fact know that this action consists of the following code:
 
 ```
 heavy_model = ModelTree.find(user_id)
-prpfligation_outcome = Profilgator.profligate()`
+prpfligation_outcome = Profilgator.profligate(heavy_model)
 Promulgator.promulgate(profligation_outcome)
 ```
 
@@ -28,12 +28,21 @@ and metrics from both the `promulgator` gem and the `profligator` gem calls woul
 The good part of it is that neither the `promulgator` or the `profligator` would have to depend on something
 heavy (or Rails version dependent!) as `ActiveSupport::Notifications`
 
+## Visualising the benefit
+
+This is an action from one of our applications, where we parse the image format and then perform image processing.
+Both tasks (format detection and image transformations) are handled by separate libraries - `format_parser` and
+`image_vise` respectively. Even though the graph comes from Appsignal, neither of the libraries has knowledge
+of Appsignal's existence in the system.
+
+![Appsignal action with Measurometer sources](measurometer_in_practice.png)
+
 ## Installation for libraries
 
 If you want to supply Measurometer metrics, add this line to your **library's** Gemfile:
 
 ```ruby
-s.add_dependency 'measurometer', '~> `'
+s.add_dependency 'measurometer', '~> 1'
 ```
 
 That's right, we _promise_ to guarantee version 1 compatibility for as long as possible, for as long
@@ -51,11 +60,14 @@ and run the block wrapped with `Measurometer.instrument()`
 
 ```
 Measurometer.instrument('profligator.ideate') do
-  multiple_options = Thinkfluencer.ideate(the_creative)
+  options_offered_to_client = Thinkfluencer.ideate(the_creative)
   Measurometer.increment_counter('profligator.num_ideations', 1)x
-  Measurometer.increment_counter('profligator.add_distribution_value', multiple_options)
+  Measurometer.add_distribution_value('profligator.options_offered_to_client_per_ideation', options_offered_to_client.length)
 end
 ```
+
+Note that it is prudent to make your library provide **either** Measurometer instrumentation **or** ActiveSupport::Notifications,
+but **not both** - unless your metrics collection driver/system can deal with that cleanly.
 
 ## Usage in applications
 
@@ -67,7 +79,7 @@ be explicitly added to the set of Measurometer drivers to source instrumentation
 Measurometer.drivers << Appsignal
 ```
 
-Appsignal, since Measurometer's API copies it's instrumentaiton API, can be used as a driver as-is,
+Appsignal, since Measurometer's API copies it's instrumentaiton API, can be used as-is,
 without any adapters.
 
 ## Development
