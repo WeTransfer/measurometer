@@ -22,7 +22,7 @@ module Measurometer
     end
 
     def add_distribution_value(key_path, value)
-      @statsd_client.count key_path, value
+      @statsd_client.count(key_path, value)
     end
 
     def set_gauge(gauge_name, value)
