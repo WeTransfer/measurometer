@@ -14,9 +14,43 @@ RSpec.describe Measurometer do
   end
 
   describe '.drivers' do
-    it 'allows adding a driver'
-    it 'allows removing a driver'
-    it 'does not add the same driver twice'
+    before(:each) { Measurometer.drivers.clear }
+    after(:each) { Measurometer.drivers.clear }
+    let(:driver) { Object.new }
+
+    it 'allows adding and removing a driver' do
+      expect(Measurometer.drivers).not_to include(driver)
+
+      Measurometer.drivers << driver
+      expect(Measurometer.drivers).to include(driver)
+
+      Measurometer.drivers.delete(driver)
+      expect(Measurometer.drivers).not_to include(driver)
+    end
+
+    it 'does not add the same driver twice' do
+      Measurometer.drivers.clear
+      3.times { Measurometer.drivers << driver }
+      expect(Measurometer.drivers.length).to eq(1)
+    end
+  end
+
+  describe '.instrument' do
+    it 'preserves the return value of the block even if one of the drivers swallows it' do
+      bad_driver = Object.new
+      def bad_driver.instrument(blk)
+        result = yield
+        nil # Be nasty
+      end
+
+      Measurometer.drivers << bad_driver
+      instrument_result = Measurometer.instrument('foo') do
+        :block_result
+      end
+      Measurometer.drivers.delete(bad_driver)
+
+      expect(instrument_result).to eq(:block_result)
+    end
   end
 
   it 'sources instrumentation to a driver' do

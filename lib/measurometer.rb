@@ -47,11 +47,14 @@ module Measurometer
     # @return [Object] the return value of &blk
     def instrument(block_name, &blk)
       return yield if @drivers.empty? # The block wrapping business is not free
-      @drivers.inject(blk) { |outer_block, driver|
+      blk_return_value = nil
+      blk_with_capture = -> { blk_return_value = blk.call }
+      @drivers.inject(blk_with_capture) { |outer_block, driver|
         -> {
           driver.instrument(block_name, &outer_block)
         }
       }.call
+      blk_return_value
     end
 
     # Adds a distribution value (sample) under a given path
