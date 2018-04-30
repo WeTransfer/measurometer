@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 
 RSpec.describe Measurometer do
   RSpec::Matchers.define :include_counter_or_measurement_named do |named|
@@ -9,7 +9,7 @@ RSpec.describe Measurometer do
     end
   end
 
-  it "has a version number" do
+  it 'has a version number' do
     expect(Measurometer::VERSION).not_to be nil
   end
 
@@ -38,8 +38,8 @@ RSpec.describe Measurometer do
   describe '.instrument' do
     it 'preserves the return value of the block even if one of the drivers swallows it' do
       bad_driver = Object.new
-      def bad_driver.instrument(blk)
-        result = yield
+      def bad_driver.instrument(_blk)
+        yield
         nil # Be nasty
       end
 
@@ -79,8 +79,7 @@ RSpec.describe Measurometer do
     instrumenter = driver_class.new
     Measurometer.drivers << instrumenter
 
-
-    instrument_result = Measurometer.instrument('something_amazing.foo') do
+    Measurometer.instrument('something_amazing.foo') do
       sleep(rand / 4)
       Measurometer.instrument('something_amazing.subtask') do
         sleep(rand / 9)

@@ -1,11 +1,10 @@
-require "measurometer/version"
+require 'measurometer/version'
 require 'set'
 
 module Measurometer
   @drivers = Set.new
 
   class << self
-    
     # Permits adding instrumentation drivers. Measurometer is 1-1 API
     # compatible with Appsignal, which we use a lot. So to magically
     # obtain all Appsignal instrumentation, add the Appsignal module
