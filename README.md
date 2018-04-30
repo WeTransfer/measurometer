@@ -37,6 +37,15 @@ of Appsignal's existence in the system.
 
 ![Appsignal action with Measurometer sources](measurometer_in_practice.png)
 
+## Usage with statsd-ruby
+
+For [statsd-ruby](https://github.com/reinh/statsd) we provide a builtin adapter. Pass it your client object:
+
+```
+$statsd = Statsd.new 'localhost', 8125
+Measurometer.drivers << Measurometer::StatsdDriver.new($statsd)
+```
+
 ## Installation for libraries
 
 If you want to supply Measurometer metrics, add this line to your **library's** Gemfile:

@@ -3,6 +3,7 @@ require 'set'
 
 module Measurometer
   @drivers = Set.new
+  autoload :StatsdDriver, 'measurometer/statsd_driver'
 
   class << self
     # Permits adding instrumentation drivers. Measurometer is 1-1 API
@@ -15,10 +16,14 @@ module Measurometer
     # A driver must be reentrant and thread-safe - it should be possible
     # to have multiple `instrument` calls open from different threads at the
     # same time.
-    # The driver must support the same interface as the Measurometer class
-    # itself, minus the `drivers` and `instrument_instance_method` methods.
     #
-    # @return Array
+    # The driver must support the same interface as the Measurometer class
+    # itself, minus the `drivers` method.
+    #
+    # Note that this method does not return a copy of the drivers, it returns
+    # the mutable Set itself
+    #
+    # @return [Set]
     def drivers
       @drivers
     end
@@ -29,17 +34,12 @@ module Measurometer
     #   Measurometer.instrument('do_foo') { compute! }
     #
     # unfolds to
+    #
     #   Appsignal.instrument('do_foo') do
-    #     Statsd.timing('do_foo') do
+    #     StatsdDriver#instrument('do_foo') do
     #       compute!
     #     end
     #   end
-    #
-    # A driver must be reentrant and thread-safe - it should be possible
-    # to have multiple `instrument` calls open from different threads at the
-    # same time.
-    # The driver must support the same interface as the Measurometer class
-    # itself, minus the `drivers` and `instrument_instance_method` methods.
     #
     # @param block_name[String] under which path to push the metric
     # @param blk[#call] the block to instrument
@@ -62,7 +62,7 @@ module Measurometer
     # @param value[Numeric] distribution value
     # @return nil
     def add_distribution_value(value_path, value)
-      (@drivers || []).each { |d| d.add_distribution_value(value_path, value) }
+      @drivers.each { |d| d.add_distribution_value(value_path, value) }
       nil
     end
 
@@ -72,7 +72,17 @@ module Measurometer
     # @param by[Integer] the counter increment to apply
     # @return nil
     def increment_counter(counter_path, by)
-      (@drivers || []).each { |d| d.increment_counter(counter_path, by) }
+      @drivers.each { |d| d.increment_counter(counter_path, by) }
+      nil
+    end
+
+    # Set a global single named value (gauge)
+    #
+    # @param gauge_name[String] under which path to push the metric
+    # @param value[Integer] the absolute value of the gauge
+    # @return nil
+    def set_gauge(gauge_name, value)
+      @drivers.each { |d| d.set_gauge(gauge_name, value) }
       nil
     end
   end

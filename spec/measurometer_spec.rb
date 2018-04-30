@@ -55,7 +55,7 @@ RSpec.describe Measurometer do
 
   it 'sources instrumentation to a driver' do
     driver_class = Class.new do
-      attr_accessor :timings, :counters, :distributions
+      attr_accessor :timings, :counters, :distributions, :gauges
       def instrument(block_name)
         s = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         yield.tap do
@@ -74,6 +74,11 @@ RSpec.describe Measurometer do
         @counters ||= []
         @counters << [value_path, value]
       end
+
+      def set_gauge(value_path, value)
+        @gauges ||= []
+        @gauges << [value_path, value]
+      end
     end
 
     instrumenter = driver_class.new
@@ -90,6 +95,7 @@ RSpec.describe Measurometer do
         sleep(sd)
         Measurometer.add_distribution_value('something_amazing.another_subtask.sleep_durations', sd)
       end
+      Measurometer.set_gauge('some.gauge', 42)
       :task_finished
     end
 
@@ -100,5 +106,6 @@ RSpec.describe Measurometer do
     expect(instrumenter.timings).to include_counter_or_measurement_named('something_amazing.subtask')
     expect(instrumenter.timings).to include_counter_or_measurement_named('something_amazing.another_subtask')
     expect(instrumenter.timings).to include_counter_or_measurement_named('something_amazing.foo')
+    expect(instrumenter.gauges).to include_counter_or_measurement_named('some.gauge')
   end
 end
