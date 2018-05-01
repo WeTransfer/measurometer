@@ -48,7 +48,7 @@ Measurometer.drivers << Measurometer::StatsdDriver.new($statsd)
 
 ## Installation for libraries
 
-If you want to supply Measurometer metrics, add this line to your **library's** Gemfile:
+If you want to supply Measurometer metrics, add this line to your **library's** `.gemspec`:
 
 ```ruby
 s.add_dependency 'measurometer', '~> 1'
