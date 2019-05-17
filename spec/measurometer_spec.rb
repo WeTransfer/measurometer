@@ -88,6 +88,7 @@ RSpec.describe Measurometer do
       sleep(rand / 4)
       Measurometer.instrument('something_amazing.subtask') do
         sleep(rand / 9)
+        Measurometer.increment_counter('something_amazing.conflagrations_triggered')
         Measurometer.increment_counter('something_amazing.subtasks_performed', 1)
       end
       Measurometer.instrument('something_amazing.another_subtask') do
@@ -102,6 +103,7 @@ RSpec.describe Measurometer do
     Measurometer.drivers.delete(instrumenter)
 
     expect(instrumenter.counters).to include_counter_or_measurement_named('something_amazing.subtasks_performed')
+    expect(instrumenter.counters).to include_counter_or_measurement_named('something_amazing.conflagrations_triggered')
     expect(instrumenter.distributions).to include_counter_or_measurement_named('something_amazing.another_subtask.sleep_durations')
     expect(instrumenter.timings).to include_counter_or_measurement_named('something_amazing.subtask')
     expect(instrumenter.timings).to include_counter_or_measurement_named('something_amazing.another_subtask')

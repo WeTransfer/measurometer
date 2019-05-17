@@ -71,7 +71,7 @@ module Measurometer
     # @param counter_path[String] under which path to push the metric
     # @param by[Integer] the counter increment to apply
     # @return nil
-    def increment_counter(counter_path, by)
+    def increment_counter(counter_path, by = 1)
       @drivers.each { |d| d.increment_counter(counter_path, by) }
       nil
     end
