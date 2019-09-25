@@ -9,7 +9,7 @@ You for a fact know that this action consists of the following code:
 
 ```
 heavy_model = ModelTree.find(user_id)
-prpfligation_outcome = Profilgator.profligate(heavy_model)
+profligation_outcome = Profilgator.profligate(heavy_model)
 Promulgator.promulgate(profligation_outcome)
 ```
 
