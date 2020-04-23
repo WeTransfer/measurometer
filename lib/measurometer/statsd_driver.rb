@@ -8,7 +8,7 @@ module Measurometer
       @statsd_client = ruby_statsd_client
     end
 
-    def instrument(action_name)
+    def instrument(action_name, **)
       s = gettime
       yield.tap do
         delta_fractional_s = gettime - s
@@ -17,15 +17,15 @@ module Measurometer
       end
     end
 
-    def increment_counter(counter_name, by)
+    def increment_counter(counter_name, by, **)
       @statsd_client.increment(counter_name, by)
     end
 
-    def add_distribution_value(key_path, value)
+    def add_distribution_value(key_path, value, **)
       @statsd_client.count(key_path, value)
     end
 
-    def set_gauge(gauge_name, value)
+    def set_gauge(gauge_name, value, **)
       @statsd_client.gauge(gauge_name, value)
     end
 

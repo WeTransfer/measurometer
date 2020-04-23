@@ -17,7 +17,7 @@ describe 'Measurometer::StatsdDriver' do
     Measurometer.increment_counter('app.some_counter', 2)
     Measurometer.add_distribution_value('app.some_sample', 42)
 
-    expect(statsd).to have_received(:timing) {|block_name, timing_millis|
+    expect(statsd).to have_received(:timing) { |block_name, timing_millis|
       expect(block_name).to eq('some_block.x')
       expect(timing_millis).to be_within(20).of(200)
     }

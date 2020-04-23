@@ -51,9 +51,23 @@ RSpec.describe Measurometer do
 
       expect(instrument_result).to eq(:block_result)
     end
+
+    it 'passes tags to every driver' do
+      driver = double('Some driver')
+      expect(driver).to receive(:instrument).with('foo', region: 'eu').and_yield
+
+      Measurometer.drivers << driver
+
+      instrument_result = Measurometer.instrument('foo', region: 'eu') do
+        :block_result
+      end
+      Measurometer.drivers.delete(driver)
+
+      expect(instrument_result).to eq(:block_result)
+    end
   end
 
-  it 'sources instrumentation to a driver' do
+  it 'sources instrumentation to a driver which does not support tags' do
     driver_class = Class.new do
       attr_accessor :timings, :counters, :distributions, :gauges
       def instrument(block_name)
@@ -97,6 +111,65 @@ RSpec.describe Measurometer do
         Measurometer.add_distribution_value('something_amazing.another_subtask.sleep_durations', sd)
       end
       Measurometer.set_gauge('some.gauge', 42)
+      :task_finished
+    end
+
+    Measurometer.drivers.delete(instrumenter)
+
+    expect(instrumenter.counters).to include_counter_or_measurement_named('something_amazing.subtasks_performed')
+    expect(instrumenter.counters).to include_counter_or_measurement_named('something_amazing.conflagrations_triggered')
+    expect(instrumenter.distributions).to include_counter_or_measurement_named('something_amazing.another_subtask.sleep_durations')
+    expect(instrumenter.timings).to include_counter_or_measurement_named('something_amazing.subtask')
+    expect(instrumenter.timings).to include_counter_or_measurement_named('something_amazing.another_subtask')
+    expect(instrumenter.timings).to include_counter_or_measurement_named('something_amazing.foo')
+    expect(instrumenter.gauges).to include_counter_or_measurement_named('some.gauge')
+  end
+
+  it 'sources instrumentation to a driver which does support tags' do
+    # We make "region:" a required kwarg for all methods
+    driver_class = Class.new do
+      attr_accessor :timings, :counters, :distributions, :gauges
+      def instrument(block_name, region:) # rubocop:disable Lint/UnusedMethodArgument
+        s = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        yield.tap do
+          delta = Process.clock_gettime(Process::CLOCK_MONOTONIC) - s
+          @timings ||= []
+          @timings << [block_name, delta * 1000]
+        end
+      end
+
+      def add_distribution_value(value_path, value, region:) # rubocop:disable Lint/UnusedMethodArgument
+        @distributions ||= []
+        @distributions << [value_path, value]
+      end
+
+      def increment_counter(value_path, value, region:) # rubocop:disable Lint/UnusedMethodArgument
+        @counters ||= []
+        @counters << [value_path, value]
+      end
+
+      def set_gauge(value_path, value, region:) # rubocop:disable Lint/UnusedMethodArgument
+        @gauges ||= []
+        @gauges << [value_path, value]
+      end
+    end
+
+    instrumenter = driver_class.new
+    Measurometer.drivers << instrumenter
+
+    Measurometer.instrument('something_amazing.foo', region: 'abc') do
+      sleep(rand / 4)
+      Measurometer.instrument('something_amazing.subtask', region: 'abc') do
+        sleep(rand / 9)
+        Measurometer.increment_counter('something_amazing.conflagrations_triggered', region: 'abc')
+        Measurometer.increment_counter('something_amazing.subtasks_performed', 1, region: 'abc')
+      end
+      Measurometer.instrument('something_amazing.another_subtask', region: 'abc') do
+        sd = rand / 9
+        sleep(sd)
+        Measurometer.add_distribution_value('something_amazing.another_subtask.sleep_durations', sd, region: 'abc')
+      end
+      Measurometer.set_gauge('some.gauge', 42, region: 'abc')
       :task_finished
     end
 

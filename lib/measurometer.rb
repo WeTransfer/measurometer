@@ -42,15 +42,16 @@ module Measurometer
     #   end
     #
     # @param block_name[String] under which path to push the metric
+    # @param tags[Hash<Symbol->String>] any tags for the metric
     # @param blk[#call] the block to instrument
     # @return [Object] the return value of &blk
-    def instrument(block_name, &blk)
+    def instrument(block_name, **tag, &blk)
       return yield if @drivers.empty? # The block wrapping business is not free
       blk_return_value = nil
       blk_with_capture = -> { blk_return_value = blk.call }
       @drivers.inject(blk_with_capture) { |outer_block, driver|
         -> {
-          driver.instrument(block_name, &outer_block)
+          driver.instrument(block_name, **tag, &outer_block)
         }
       }.call
       blk_return_value
@@ -60,9 +61,10 @@ module Measurometer
     #
     # @param value_path[String] under which path to push the metric
     # @param value[Numeric] distribution value
+    # @param tags[Hash<Symbol->String>] any tags for the metric
     # @return nil
-    def add_distribution_value(value_path, value)
-      @drivers.each { |d| d.add_distribution_value(value_path, value) }
+    def add_distribution_value(value_path, value, **tags)
+      @drivers.each { |d| d.add_distribution_value(value_path, value, **tags) }
       nil
     end
 
@@ -70,9 +72,10 @@ module Measurometer
     #
     # @param counter_path[String] under which path to push the metric
     # @param by[Integer] the counter increment to apply
+    # @param tags[Hash<Symbol->String>] any tags for the metric
     # @return nil
-    def increment_counter(counter_path, by = 1)
-      @drivers.each { |d| d.increment_counter(counter_path, by) }
+    def increment_counter(counter_path, by = 1, **tags)
+      @drivers.each { |d| d.increment_counter(counter_path, by, **tags) }
       nil
     end
 
@@ -80,9 +83,10 @@ module Measurometer
     #
     # @param gauge_name[String] under which path to push the metric
     # @param value[Integer] the absolute value of the gauge
+    # @param tags[Hash<Symbol->String>] any tags for the metric
     # @return nil
-    def set_gauge(gauge_name, value)
-      @drivers.each { |d| d.set_gauge(gauge_name, value) }
+    def set_gauge(gauge_name, value, **tags)
+      @drivers.each { |d| d.set_gauge(gauge_name, value, **tags) }
       nil
     end
   end
