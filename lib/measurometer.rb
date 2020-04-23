@@ -45,13 +45,13 @@ module Measurometer
     # @param tags[Hash<Symbol->String>] any tags for the metric
     # @param blk[#call] the block to instrument
     # @return [Object] the return value of &blk
-    def instrument(block_name, **tag, &blk)
+    def instrument(block_name, **tags, &blk)
       return yield if @drivers.empty? # The block wrapping business is not free
       blk_return_value = nil
       blk_with_capture = -> { blk_return_value = blk.call }
       @drivers.inject(blk_with_capture) { |outer_block, driver|
         -> {
-          driver.instrument(block_name, **tag, &outer_block)
+          driver.instrument(block_name, **tags, &outer_block)
         }
       }.call
       blk_return_value
