@@ -50,7 +50,7 @@ module Measurometer
       blk_with_capture = -> { blk_return_value = blk.call }
       @drivers.inject(blk_with_capture) { |outer_block, driver|
         -> {
-          driver.instrument(block_name, &outer_block)
+          driver.instrument(block_name.to_s, &outer_block)
         }
       }.call
       blk_return_value
@@ -62,7 +62,7 @@ module Measurometer
     # @param value[Numeric] distribution value
     # @return nil
     def add_distribution_value(value_path, value)
-      @drivers.each { |d| d.add_distribution_value(value_path, value) }
+      @drivers.each { |d| d.add_distribution_value(value_path.to_s, value) }
       nil
     end
 
@@ -72,7 +72,7 @@ module Measurometer
     # @param by[Integer] the counter increment to apply
     # @return nil
     def increment_counter(counter_path, by = 1)
-      @drivers.each { |d| d.increment_counter(counter_path, by) }
+      @drivers.each { |d| d.increment_counter(counter_path.to_s, by) }
       nil
     end
 
@@ -82,7 +82,7 @@ module Measurometer
     # @param value[Integer] the absolute value of the gauge
     # @return nil
     def set_gauge(gauge_name, value)
-      @drivers.each { |d| d.set_gauge(gauge_name, value) }
+      @drivers.each { |d| d.set_gauge(gauge_name.to_s, value) }
       nil
     end
   end
