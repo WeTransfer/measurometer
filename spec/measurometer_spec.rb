@@ -35,6 +35,52 @@ RSpec.describe Measurometer do
     end
   end
 
+  describe '.add_distribution_value' do
+    it 'converts the metric name to a String before passing it to the driver' do
+      driver = double
+      expect(driver).to receive(:add_distribution_value).with('bar_intensity', 114.4)
+
+      Measurometer.drivers << driver
+      result = Measurometer.add_distribution_value(:bar_intensity, 114.4)
+      expect(result).to be_nil
+      Measurometer.drivers.delete(driver)
+    end
+  end
+
+  describe '.increment_counter' do
+    it 'increments by 1 by default and converts the counter name to a String before passing it to the driver' do
+      driver = double
+      expect(driver).to receive(:increment_counter).with('barness', 1)
+
+      Measurometer.drivers << driver
+      result = Measurometer.increment_counter(:barness)
+      expect(result).to be_nil
+      Measurometer.drivers.delete(driver)
+    end
+
+    it 'passes the increment to the driver' do
+      driver = double
+      expect(driver).to receive(:increment_counter).with('barness', 123)
+
+      Measurometer.drivers << driver
+      result = Measurometer.increment_counter(:barness, 123)
+      expect(result).to be_nil
+      Measurometer.drivers.delete(driver)
+    end
+  end
+
+  describe '.set_gauge' do
+    it 'converts the gauge name to a String before passing it to the driver' do
+      driver = double
+      expect(driver).to receive(:set_gauge).with('fooeyness', 456)
+
+      Measurometer.drivers << driver
+      result = Measurometer.set_gauge(:fooeyness, 456)
+      expect(result).to be_nil
+      Measurometer.drivers.delete(driver)
+    end
+  end
+
   describe '.instrument' do
     it 'preserves the return value of the block even if one of the drivers swallows it' do
       bad_driver = Object.new
@@ -48,6 +94,22 @@ RSpec.describe Measurometer do
         :block_result
       end
       Measurometer.drivers.delete(bad_driver)
+
+      expect(instrument_result).to eq(:block_result)
+    end
+
+    it 'converts the block name to a String before passing it to the instrumenters' do
+      instrumentation_driver = Object.new
+      def instrumentation_driver.instrument(block_name)
+        raise 'Block name must be a string' unless block_name.is_a?(String)
+        yield
+      end
+
+      Measurometer.drivers << instrumentation_driver
+      instrument_result = Measurometer.instrument(:foo) do
+        :block_result
+      end
+      Measurometer.drivers.delete(instrumentation_driver)
 
       expect(instrument_result).to eq(:block_result)
     end
