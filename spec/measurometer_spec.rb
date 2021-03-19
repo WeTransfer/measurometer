@@ -50,7 +50,7 @@ RSpec.describe Measurometer do
   describe '.increment_counter' do
     it 'increments by 1 by default and converts the counter name to a String before passing it to the driver' do
       driver = double
-      expect(driver).to receive(:increment_counter).with('barness', 1)
+      expect(driver).to receive(:increment_counter).with('barness', 1, {})
 
       Measurometer.drivers << driver
       result = Measurometer.increment_counter(:barness)
@@ -59,7 +59,7 @@ RSpec.describe Measurometer do
 
     it 'passes the increment to the driver' do
       driver = double
-      expect(driver).to receive(:increment_counter).with('barness', 123)
+      expect(driver).to receive(:increment_counter).with('barness', 123, {})
 
       Measurometer.drivers << driver
       result = Measurometer.increment_counter(:barness, 123)
@@ -79,7 +79,7 @@ RSpec.describe Measurometer do
   describe '.set_gauge' do
     it 'converts the gauge name to a String before passing it to the driver' do
       driver = double
-      expect(driver).to receive(:set_gauge).with('fooeyness', 456)
+      expect(driver).to receive(:set_gauge).with('fooeyness', 456, {})
 
       Measurometer.drivers << driver
       result = Measurometer.set_gauge(:fooeyness, 456)
@@ -147,12 +147,12 @@ RSpec.describe Measurometer do
         @distributions << [value_path, value]
       end
 
-      def increment_counter(value_path, value)
+      def increment_counter(value_path, value, tags={})
         @counters ||= []
         @counters << [value_path, value]
       end
 
-      def set_gauge(value_path, value)
+      def set_gauge(value_path, value, tags={})
         @gauges ||= []
         @gauges << [value_path, value]
       end
