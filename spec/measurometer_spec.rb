@@ -9,13 +9,14 @@ RSpec.describe Measurometer do
     end
   end
 
+  before(:each) { Measurometer.drivers.clear }
+  after(:each) { Measurometer.drivers.clear }
+
   it 'has a version number' do
     expect(Measurometer::VERSION).not_to be nil
   end
 
   describe '.drivers' do
-    before(:each) { Measurometer.drivers.clear }
-    after(:each) { Measurometer.drivers.clear }
     let(:driver) { Object.new }
 
     it 'allows adding and removing a driver' do
@@ -43,7 +44,6 @@ RSpec.describe Measurometer do
       Measurometer.drivers << driver
       result = Measurometer.add_distribution_value(:bar_intensity, 114.4)
       expect(result).to be_nil
-      Measurometer.drivers.delete(driver)
     end
   end
 
@@ -55,7 +55,6 @@ RSpec.describe Measurometer do
       Measurometer.drivers << driver
       result = Measurometer.increment_counter(:barness)
       expect(result).to be_nil
-      Measurometer.drivers.delete(driver)
     end
 
     it 'passes the increment to the driver' do
@@ -65,7 +64,6 @@ RSpec.describe Measurometer do
       Measurometer.drivers << driver
       result = Measurometer.increment_counter(:barness, 123)
       expect(result).to be_nil
-      Measurometer.drivers.delete(driver)
     end
 
     it 'passes tags to the driver' do
@@ -75,7 +73,6 @@ RSpec.describe Measurometer do
       Measurometer.drivers << driver
       result = Measurometer.increment_counter(:barness, 123, tag1: 11, tag2: 22)
       expect(result).to be_nil
-      Measurometer.drivers.delete(driver)
     end
   end
 
@@ -87,7 +84,6 @@ RSpec.describe Measurometer do
       Measurometer.drivers << driver
       result = Measurometer.set_gauge(:fooeyness, 456)
       expect(result).to be_nil
-      Measurometer.drivers.delete(driver)
     end
 
     it 'passes tags to the driver' do
@@ -97,7 +93,6 @@ RSpec.describe Measurometer do
       Measurometer.drivers << driver
       result = Measurometer.set_gauge(:fooeyness, 123, tag1: 11, tag2: 22)
       expect(result).to be_nil
-      Measurometer.drivers.delete(driver)
     end
   end
 
