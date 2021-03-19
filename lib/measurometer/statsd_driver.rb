@@ -17,7 +17,7 @@ module Measurometer
       end
     end
 
-    def increment_counter(counter_name, by)
+    def increment_counter(counter_name, by, **_tags)
       @statsd_client.increment(counter_name, by)
     end
 
@@ -25,7 +25,7 @@ module Measurometer
       @statsd_client.count(key_path, value)
     end
 
-    def set_gauge(gauge_name, value)
+    def set_gauge(gauge_name, value, **_tags)
       @statsd_client.gauge(gauge_name, value)
     end
 

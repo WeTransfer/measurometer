@@ -14,7 +14,9 @@ describe 'Measurometer::StatsdDriver' do
     end
 
     Measurometer.set_gauge('app.some_gauge', 42)
+    Measurometer.set_gauge('app.another_gauge', 43, ignore_this_tag: 2)
     Measurometer.increment_counter('app.some_counter', 2)
+    Measurometer.increment_counter('app.another_counter', 3, ignore_this_tag: 1)
     Measurometer.add_distribution_value('app.some_sample', 42)
 
     expect(statsd).to have_received(:timing) { |block_name, timing_millis|
@@ -23,6 +25,8 @@ describe 'Measurometer::StatsdDriver' do
     }
 
     expect(statsd).to have_received(:increment).with('app.some_counter', 2)
+    expect(statsd).to have_received(:increment).with('app.another_counter', 3)
     expect(statsd).to have_received(:count).with('app.some_sample', 42)
+    expect(statsd).to have_received(:gauge).with('app.another_gauge', 43)
   end
 end

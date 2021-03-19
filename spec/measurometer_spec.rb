@@ -67,6 +67,16 @@ RSpec.describe Measurometer do
       expect(result).to be_nil
       Measurometer.drivers.delete(driver)
     end
+
+    it 'passes tags to the driver' do
+      driver = double
+      expect(driver).to receive(:increment_counter).with('barness', 123, tag1: 11, tag2: 22)
+
+      Measurometer.drivers << driver
+      result = Measurometer.increment_counter(:barness, 123, tag1: 11, tag2: 22)
+      expect(result).to be_nil
+      Measurometer.drivers.delete(driver)
+    end
   end
 
   describe '.set_gauge' do
@@ -76,6 +86,16 @@ RSpec.describe Measurometer do
 
       Measurometer.drivers << driver
       result = Measurometer.set_gauge(:fooeyness, 456)
+      expect(result).to be_nil
+      Measurometer.drivers.delete(driver)
+    end
+
+    it 'passes tags to the driver' do
+      driver = double
+      expect(driver).to receive(:set_gauge).with('fooeyness', 123, tag1: 11, tag2: 22)
+
+      Measurometer.drivers << driver
+      result = Measurometer.set_gauge(:fooeyness, 123, tag1: 11, tag2: 22)
       expect(result).to be_nil
       Measurometer.drivers.delete(driver)
     end

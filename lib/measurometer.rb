@@ -71,8 +71,8 @@ module Measurometer
     # @param counter_path[String] under which path to push the metric
     # @param by[Integer] the counter increment to apply
     # @return nil
-    def increment_counter(counter_path, by = 1)
-      @drivers.each { |d| d.increment_counter(counter_path.to_s, by) }
+    def increment_counter(counter_path, by = 1, **tags)
+      @drivers.each { |d| d.increment_counter(counter_path.to_s, by, **tags) }
       nil
     end
 
@@ -81,8 +81,8 @@ module Measurometer
     # @param gauge_name[String] under which path to push the metric
     # @param value[Integer] the absolute value of the gauge
     # @return nil
-    def set_gauge(gauge_name, value)
-      @drivers.each { |d| d.set_gauge(gauge_name.to_s, value) }
+    def set_gauge(gauge_name, value, **tags)
+      @drivers.each { |d| d.set_gauge(gauge_name.to_s, value, **tags) }
       nil
     end
   end
