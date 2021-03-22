@@ -1,3 +1,7 @@
+# 1.2.0
+
+* Adds support to set a tag on Appsignal in methods `increment_counter` and `set_gauge`
+
 # 1.1.1
 
 * Automatically convert metric and instrumentation block names to Strings, since i.e.
