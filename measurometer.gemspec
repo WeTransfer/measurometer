@@ -8,6 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Measurometer::VERSION
   spec.authors       = ['Julik Tarkhanov']
   spec.email         = ['me@julik.nl']
+  spec.required_ruby_version = Gem::Requirement.new(">= 2.5.0")
 
   spec.summary       = 'Minimum viable API for instrumentation in libraries'
   spec.description   = 'Minimum viable API for instrumentation in libraries. Source metrics from your libraries to Measurometer, pick them up on the other end in the application, centrally.'
