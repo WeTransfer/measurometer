@@ -39,10 +39,19 @@ RSpec.describe Measurometer do
   describe '.add_distribution_value' do
     it 'converts the metric name to a String before passing it to the driver' do
       driver = double
-      expect(driver).to receive(:add_distribution_value).with('bar_intensity', 114.4)
+      expect(driver).to receive(:add_distribution_value).with('bar_intensity', 114.4, {})
 
       Measurometer.drivers << driver
       result = Measurometer.add_distribution_value(:bar_intensity, 114.4)
+      expect(result).to be_nil
+    end
+
+    it 'accepts tags and passes them through' do
+      driver = double
+      expect(driver).to receive(:add_distribution_value).with('bar_intensity', 114.4, host: 'server1')
+
+      Measurometer.drivers << driver
+      result = Measurometer.add_distribution_value(:bar_intensity, 114.4, host: 'server1')
       expect(result).to be_nil
     end
   end
@@ -142,17 +151,17 @@ RSpec.describe Measurometer do
         end
       end
 
-      def add_distribution_value(value_path, value)
+      def add_distribution_value(value_path, value, _tags = {})
         @distributions ||= []
         @distributions << [value_path, value]
       end
 
-      def increment_counter(value_path, value, tags={})
+      def increment_counter(value_path, value, _tags = {})
         @counters ||= []
         @counters << [value_path, value]
       end
 
-      def set_gauge(value_path, value, tags={})
+      def set_gauge(value_path, value, _tags = {})
         @gauges ||= []
         @gauges << [value_path, value]
       end
