@@ -60,9 +60,10 @@ module Measurometer
     #
     # @param value_path[String] under which path to push the metric
     # @param value[Numeric] distribution value
+    # @param tags[Hash] tags for the sample
     # @return nil
-    def add_distribution_value(value_path, value)
-      @drivers.each { |d| d.add_distribution_value(value_path.to_s, value) }
+    def add_distribution_value(value_path, value, tags = {})
+      @drivers.each { |d| d.add_distribution_value(value_path.to_s, value, tags) }
       nil
     end
 
@@ -71,7 +72,7 @@ module Measurometer
     # @param counter_path[String] under which path to push the metric
     # @param by[Integer] the counter increment to apply
     # @return nil
-    def increment_counter(counter_path, by = 1, tags={})
+    def increment_counter(counter_path, by = 1, tags = {})
       @drivers.each { |d| d.increment_counter(counter_path.to_s, by, tags) }
       nil
     end
@@ -81,7 +82,7 @@ module Measurometer
     # @param gauge_name[String] under which path to push the metric
     # @param value[Integer] the absolute value of the gauge
     # @return nil
-    def set_gauge(gauge_name, value, tags={})
+    def set_gauge(gauge_name, value, tags = {})
       @drivers.each { |d| d.set_gauge(gauge_name.to_s, value, tags) }
       nil
     end

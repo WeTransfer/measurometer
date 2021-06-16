@@ -1,3 +1,7 @@
+# 1.3.0
+
+* Adds support to set a tag on Appsignal in `add_distribution_value` as well (in addition to gauges and counters)
+
 # 1.2.0
 
 * Adds support to set a tag on Appsignal in methods `increment_counter` and `set_gauge`
