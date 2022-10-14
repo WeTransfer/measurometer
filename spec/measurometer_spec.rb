@@ -48,7 +48,12 @@ RSpec.describe Measurometer do
 
     it 'accepts tags and passes them through' do
       driver = double
-      expect(driver).to receive(:add_distribution_value).with('bar_intensity', 114.4, host: 'server1')
+      expect(driver).to receive(:add_distribution_value)
+        .with(
+          'bar_intensity',
+          114.4,
+          a_hash_including(host: 'server1')
+        )
 
       Measurometer.drivers << driver
       result = Measurometer.add_distribution_value(:bar_intensity, 114.4, host: 'server1')
@@ -77,7 +82,12 @@ RSpec.describe Measurometer do
 
     it 'passes tags to the driver' do
       driver = double
-      expect(driver).to receive(:increment_counter).with('barness', 123, tag1: 11, tag2: 22)
+      expect(driver).to receive(:increment_counter)
+        .with(
+          'barness',
+          123,
+          a_hash_including(tag1: 11, tag2: 22)
+        )
 
       Measurometer.drivers << driver
       result = Measurometer.increment_counter(:barness, 123, tag1: 11, tag2: 22)
@@ -97,7 +107,12 @@ RSpec.describe Measurometer do
 
     it 'passes tags to the driver' do
       driver = double
-      expect(driver).to receive(:set_gauge).with('fooeyness', 123, tag1: 11, tag2: 22)
+      expect(driver).to receive(:set_gauge)
+        .with(
+          'fooeyness',
+          123,
+          a_hash_including(tag1: 11, tag2: 22)
+        )
 
       Measurometer.drivers << driver
       result = Measurometer.set_gauge(:fooeyness, 123, tag1: 11, tag2: 22)
