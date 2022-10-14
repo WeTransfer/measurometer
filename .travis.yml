@@ -5,4 +5,5 @@ rvm:
 sudo: false
 cache: bundler
 script:
-  - bundle exec rake
+  - bundle exec rspec spec
+  - bundle exec rubocop .

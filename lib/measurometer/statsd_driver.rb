@@ -32,7 +32,7 @@ module Measurometer
     private
 
     def convert_hash_tags(tags)
-      tags.map { |t| t.join(":") }
+      tags.map { |t| t.join(':') }
     end
 
     def gettime

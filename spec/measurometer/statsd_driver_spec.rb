@@ -25,8 +25,8 @@ describe 'Measurometer::StatsdDriver' do
     }
 
     expect(statsd).to have_received(:increment).with('app.some_counter', 2, tags: [])
-    expect(statsd).to have_received(:increment).with('app.another_counter', 3, tags: ["example_tag:1"])
+    expect(statsd).to have_received(:increment).with('app.another_counter', 3, tags: ['example_tag:1'])
     expect(statsd).to have_received(:count).with('app.some_sample', 42, tags: [])
-    expect(statsd).to have_received(:gauge).with('app.another_gauge', 43, tags: ["example_tag:2"])
+    expect(statsd).to have_received(:gauge).with('app.another_gauge', 43, tags: ['example_tag:2'])
   end
 end
