@@ -18,7 +18,7 @@ module Measurometer
     end
 
     def increment_counter(counter_name, by, tags = {})
-      @statsd_client.increment(counter_name, by, tags: convert_hash_tags(tags))
+      @statsd_client.increment(counter_name, by: by, tags: convert_hash_tags(tags))
     end
 
     def add_distribution_value(key_path, value, tags = {})
