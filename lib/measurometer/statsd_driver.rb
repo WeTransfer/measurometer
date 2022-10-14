@@ -17,23 +17,19 @@ module Measurometer
       end
     end
 
-    def increment_counter(counter_name, by, tags = {})
-      @statsd_client.increment(counter_name, by: by, tags: convert_hash_tags(tags))
+    def increment_counter(counter_name, by, _tags = {})
+      @statsd_client.increment(counter_name, by)
     end
 
-    def add_distribution_value(key_path, value, tags = {})
-      @statsd_client.count(key_path, value, tags: convert_hash_tags(tags))
+    def add_distribution_value(key_path, value,  _tags = {})
+      @statsd_client.count(key_path, value)
     end
 
-    def set_gauge(gauge_name, value, tags = {})
-      @statsd_client.gauge(gauge_name, value, tags: convert_hash_tags(tags))
+    def set_gauge(gauge_name, value, _tags = {})
+      @statsd_client.gauge(gauge_name, value)
     end
 
     private
-
-    def convert_hash_tags(tags)
-      tags.map { |t| t.join(':') }
-    end
 
     def gettime
       MONOTONIC_AVAILABLE ? Process.clock_gettime(Process::CLOCK_MONOTONIC) : Time.now.to_f
