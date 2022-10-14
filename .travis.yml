@@ -1,7 +1,7 @@
 rvm:
   - 2.6.5
   - 2.7.6
-  - 3.1.2
+  - 3.0.2
 sudo: false
 cache: bundler
 script:
