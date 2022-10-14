@@ -1,10 +1,5 @@
-# 1.3.2
-
-* Bug-fix: for statsd `by` is an option, not a function argument
-
 # 1.3.1
 
-* Adds support for tags on the `statsd_driver.rb`
 * Swap GitHub CI with Travis
 
 # 1.3.0
