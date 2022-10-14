@@ -1,3 +1,8 @@
+# 1.3.1
+
+* Adds support for tags on the `statsd_driver.rb`
+* Swap GitHub CI with Travis
+
 # 1.3.0
 
 * Adds support to set a tag on Appsignal in `add_distribution_value` as well (in addition to gauges and counters)
